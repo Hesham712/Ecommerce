@@ -1,6 +1,7 @@
 using Ecommerce.Data;
 using Ecommerce.Helper;
 using Ecommerce.Models;
+using Ecommerce.Repository.CartService;
 using Ecommerce.Repository.GenericService;
 using Ecommerce.Repository.UserService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -59,6 +60,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient(typeof(IGenericBasicDataRepo<,>), typeof(GenericBasicDataRepo<,>));
+builder.Services.AddTransient<ICartService, CartService>();
 
 
 // Add CORS policy to allow all origins, methods, and headers

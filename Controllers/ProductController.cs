@@ -1,16 +1,11 @@
 ﻿using AutoMapper;
-using Azure;
 using Ecommerce.Data;
 using Ecommerce.DTO_s.Product;
 using Ecommerce.Models;
 using Ecommerce.Repository.GenericService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Security.AccessControl;
 
 namespace Ecommerce.Controllers
 {
@@ -30,7 +25,6 @@ namespace Ecommerce.Controllers
             _repo = repo;
             _env = env;
         }
-        [HttpPost]
         public override async Task<IActionResult> Post([FromForm] ProductPostDTO dto)
         {
             var userName = User?.Identity?.Name;
@@ -51,7 +45,6 @@ namespace Ecommerce.Controllers
 
             return Ok(_mapper.Map<ProductGetDTO>(await _repo.AddAsync(product)));
         }
-        [HttpPut]
         public override async Task<IActionResult> Put([FromForm] ProductUpdateDTO dto)
         {
             var userName = User?.Identity?.Name;
@@ -135,6 +128,13 @@ namespace Ecommerce.Controllers
             await _repo.DeleteAsync(user.Products.Id);
             return Ok("Deleted Successfully");
         }
+        [HttpGet("GetAllProducts")]
+        [AllowAnonymous]
+        public Task<IActionResult> GetAll()
+        {
+            return base.Get();
+        } 
+
         private async Task<string> Upload(IFormFile file)
         {
             if (file == null || file.Length == 0)

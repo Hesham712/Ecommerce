@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Ecommerce.DTO_s.Cart;
 using Ecommerce.DTO_s.Product;
 using Ecommerce.DTO_s.ProductCategory;
 using Ecommerce.DTO_S.ApplicationUser;
@@ -11,6 +12,9 @@ namespace Ecommerce.Helper
         public MappingProfile()
         {
             CreateMap<ApplicationUser, UserRegisterDTO>().ReverseMap();
+
+            CreateMap<CartProductGetDTO, CartProduct>().ReverseMap();
+
             CreateMap<Product, ProductUpdateDTO>().ReverseMap()
                 .ForMember(d => d.ImagePath, s => s.Ignore())
                 .ForMember(d => d.ProductCategoryId, s => s.Condition(src => src.ProductCategoryId.HasValue));

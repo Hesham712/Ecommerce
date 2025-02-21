@@ -13,8 +13,8 @@ namespace Ecommerce.DTO_s.Product
         public double? Rate { get; set; }
         public string UserId { get; set; }
         public int ProductCategoryId { get; set; }
-        public List<Order> Orders { get; set; }
-        public List<Cart> Carts { get; set; }
-        public List<WishList> WishLists { get; set; }
+        //public List<Order>? Orders { get; set; }
+        //public List<Models.Cart>? Carts { get; set; }
+        //public List<WishList>? WishLists { get; set; }
     }
 }

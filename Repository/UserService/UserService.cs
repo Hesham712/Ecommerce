@@ -198,7 +198,8 @@ namespace Ecommerce.Repository.UserService
             var authClaims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Id)
             };
             // Add user roles to the claims
             var roles = _userManager.GetRolesAsync(user).Result;
