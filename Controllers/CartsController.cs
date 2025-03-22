@@ -14,29 +14,32 @@ namespace Ecommerce.Controllers
     public class CartsController : ControllerBase
     {
         private readonly ICartService _cartService;
-        private readonly IMapper _mapper;
-        public CartsController(ICartService cartService, IMapper mapper)
+        public CartsController(ICartService cartService)
         {
             _cartService = cartService;
-            _mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> GetCart()
         {
             var userName = User?.Identity?.Name;
             var result = await _cartService.GetCartAsync(userName);
-            if (result.Status)
-                return Ok(result);
-            return BadRequest(result);
+            return result.Status ? Ok(result) : BadRequest(result);
         }
         [HttpPost]
         public async Task<IActionResult> AddCart([FromBody] CartPostDTO dto)
         {
             var userName = User?.Identity?.Name;
             var result = await _cartService.AddCartAsync(dto, userName);
-            if (result.Status)
-                return Ok(result);
-            return BadRequest(result);
+            return result.Status ? Ok(result) : BadRequest(result);
+
+        }
+        [HttpDelete("{productId}")]
+        public async Task<IActionResult> DeleteProductFromCart(int productId)
+        {
+            var userName = User?.Identity?.Name;
+            var result = await _cartService.DeleteProductFromCartAsync(productId, userName);
+            return result.Status ? Ok(result) : BadRequest(result);
+
         }
     }
 }

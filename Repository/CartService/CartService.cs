@@ -80,6 +80,52 @@ namespace Ecommerce.Repository.CartService
             }
         }
 
+        public async Task<ResponseResult> DeleteProductFromCartAsync(int productId, string userName)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .Where(x => x.UserName == userName)
+                    .Include(x => x.Cart)
+                    .FirstOrDefaultAsync();
+                if (user == null)
+                    return new ResponseResult
+                    {
+                        Status = false,
+                        Object = "User / cart  not found"
+                    };
+                if (user.Cart == null)
+                    return new ResponseResult
+                    {
+                        Status = false,
+                        Object = "Cart not found"
+                    };
+                var cartProduct = await _context.CartProduct
+                    .FirstOrDefaultAsync(x => x.CartId == user.Cart.Id && x.ProductId == productId);
+                if (cartProduct == null)
+                    return new ResponseResult
+                    {
+                        Status = false,
+                        Object = "Product not found in cart"
+                    };
+                _context.CartProduct.Remove(cartProduct);
+                await _context.SaveChangesAsync();
+                return new ResponseResult
+                {
+                    Status = true,
+                    Object = "Deleted Successfully"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseResult
+                {
+                    Status = false,
+                    Object = ex.InnerException!.Message ?? ex.Message
+                };
+            }
+        }
+
         public async Task<ResponseResult> GetCartAsync(string userName)
         {
             try

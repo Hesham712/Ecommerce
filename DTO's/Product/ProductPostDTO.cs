@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AutoMapper.Configuration.Annotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Ecommerce.DTO_s.Product
 {
@@ -12,8 +15,10 @@ namespace Ecommerce.DTO_s.Product
         [Required]
         public int Stock { get; set; }
         public IFormFile? ImagePath { get; set; }
-        public double? Rate { get; set; }
         [Required]
         public int ProductCategoryId { get; set; }
+        [JsonIgnore]
+        internal string? userName { get; set; }
+
     }
 }

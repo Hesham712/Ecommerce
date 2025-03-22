@@ -12,8 +12,10 @@ namespace Ecommerce.Data
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Rate> Rates { get; set; }
         public DbSet<ProductCategory> ProductCategory { get; set; }
         public DbSet<Order> Orders { get; set; }
+        //public DbSet<SubOrder> SubOrder { get; set; }
         public DbSet<Refund> Refunds { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Cart> Carts { get; set; }
@@ -21,6 +23,9 @@ namespace Ecommerce.Data
         public DbSet<CartProduct> CartProduct { get; set; }
         public DbSet<OrderProduct> OrderProduct { get; set; }
         public DbSet<WishListProduct> WishListProduct { get; set; }
+        public DbSet<RefundItem> RefundItem { get; set; }
+        public DbSet<InteractionType> InteractionType { get; set; }
+        public DbSet<UserInteraction> UserInteraction { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -43,31 +48,39 @@ namespace Ecommerce.Data
             modelBuilder.Entity<WishListProduct>()
                 .HasKey(wp => new { wp.WishListId, wp.ProductId });
 
-            // Relationships
-            modelBuilder.Entity<Product>()
-                .HasMany(wp => wp.WishLists)
-                .WithMany(w => w.Products)
-                .UsingEntity<WishListProduct>();
-
             // Composite Key Configuration
             modelBuilder.Entity<OrderProduct>()
-                .HasKey(wp => new { wp.OrderId, wp.ProductId });
+                .HasAlternateKey(wp => new { wp.OrderId, wp.ProductId });
 
-            // Relationships
             modelBuilder.Entity<Product>()
-                .HasMany(wp => wp.Orders)
-                .WithMany(w => w.Products)
-                .UsingEntity<OrderProduct>();
+                .Property(e => e.IsVisible)
+                .HasDefaultValue(true);
 
             // Composite Key Configuration
             modelBuilder.Entity<CartProduct>()
                 .HasKey(wp => new { wp.CartId, wp.ProductId });
 
-            // Relationships
-            modelBuilder.Entity<Product>()
-                .HasMany(wp => wp.Carts)
-                .WithMany(w => w.Products)
-                .UsingEntity<CartProduct>();
+            modelBuilder.Entity<Rate>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Rates)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict); // لا يمكن حذف المستخدم إذا كان لديه تقييمات
+
+            modelBuilder.Entity<Rate>()
+                .HasOne(r => r.Product)
+                .WithMany(p => p.Rates)
+                .HasForeignKey(r => r.ProductId)
+                .OnDelete(DeleteBehavior.Cascade); // عند حذف المنتج، يتم حذف التقييمات
+
+            modelBuilder.Entity<Rate>()
+                .HasAlternateKey(r => new { r.UserId, r.ProductId });
+
+            modelBuilder.Entity<Refund>()
+                .HasMany(r => r.RefundItems)
+                .WithOne(ri => ri.Refund)
+                .HasForeignKey(ri => ri.RefundId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
         }
     }

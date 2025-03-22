@@ -3,7 +3,12 @@ using Ecommerce.Helper;
 using Ecommerce.Models;
 using Ecommerce.Repository.CartService;
 using Ecommerce.Repository.GenericService;
+using Ecommerce.Repository.NotificationService;
+using Ecommerce.Repository.OrderService;
+using Ecommerce.Repository.ProductSerivce;
+using Ecommerce.Repository.RefundService;
 using Ecommerce.Repository.UserService;
+using Ecommerce.Repository.WishListService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
+ 
 // Add services to the container.
 // Add DbContext
 builder.Services.AddDbContext<EcommerceDBContext>(options =>
@@ -61,6 +66,13 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient(typeof(IGenericBasicDataRepo<,>), typeof(GenericBasicDataRepo<,>));
 builder.Services.AddTransient<ICartService, CartService>();
+builder.Services.AddTransient<IWishListService, WishListService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IRefendService, RefendService>();
+builder.Services.AddTransient<IProductSerivce, ProductSerivce>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddSignalR();
+
 
 
 // Add CORS policy to allow all origins, methods, and headers
@@ -112,6 +124,11 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseStaticFiles();
 app.UseHttpsRedirection();
+app.UseCors(x => x
+     .AllowAnyMethod()
+     .AllowAnyHeader()
+     .AllowCredentials()
+      .SetIsOriginAllowed(origin => true));
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

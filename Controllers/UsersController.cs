@@ -33,7 +33,7 @@ namespace Ecommerce.Controllers
         }
 
         [Authorize]
-        [HttpPut("update")]
+        [HttpPut]
         public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDTO dto)
         {
             var userName = User.Identity.Name;
@@ -46,15 +46,23 @@ namespace Ecommerce.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordDTO dto)
         {
             var userName = User.Identity.Name;
-            var result = await _userService.ChangePasswordAsync(dto, userName); // تمرير User للـ ClaimsPrincipal
+            var result = await _userService.ChangePasswordAsync(dto, userName);
             return result.Status ? Ok(result) : BadRequest(result);
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("all")]
+        [HttpGet]
         public async Task<IActionResult> GetAllUsers()
         {
             var result = await _userService.GetAllUsersAsync();
+            return result.Status ? Ok(result) : BadRequest(result);
+        }
+        [Authorize]
+        [HttpGet("UserLogin")]
+        public async Task<IActionResult> GetUser()
+        {
+            var UserName = User.Identity.Name;
+            var result = await _userService.GetUserAsync(UserName);
             return result.Status ? Ok(result) : BadRequest(result);
         }
     }

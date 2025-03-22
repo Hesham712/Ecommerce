@@ -11,6 +11,7 @@ namespace Ecommerce.Repository.UserService
         public Task<ResponseResult> UpdateUserAsync(UserUpdateDTO dto,string userName);
         public Task<ResponseResult> ChangePasswordAsync(UserChangePasswordDTO dto,string userName);
         public Task<ResponseResult> GetAllUsersAsync();
+        public Task<ResponseResult> GetUserAsync(string userId);
         //Task<object> GetUserAsync(Guid userId);
     }
 }

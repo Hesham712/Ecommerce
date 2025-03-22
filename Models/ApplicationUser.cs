@@ -14,5 +14,6 @@ namespace Ecommerce.Models
         public string? Bio { get; set; }
         public List<Product>? Products { get; set; }
         public List<Order>? Orders { get; set; }
+        public List<Rate>? Rates { get; set; }
     }
 }

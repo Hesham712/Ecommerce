@@ -75,12 +75,26 @@ namespace Ecommerce.Repository.UserService
             };
         }
 
+        public async Task<ResponseResult> GetUserAsync(string userName)
+        {
+            var result = await _userManager.Users
+                .Select(x => new { x.Id, x.FullName, x.UserName, x.Email, x.PhoneNumber, x.Bio, x.Location })
+                .FirstOrDefaultAsync(x => x.UserName == userName);
+            return new ResponseResult
+            {
+                Object = result,
+                Status = true
+            };
+        }
+
         public async Task<ResponseResult> LoginAsync(UserLoginDTO loginDTO)
         {
             try
             {
-                var user = await _userManager.Users.FirstOrDefaultAsync(m => m.UserName.ToLower() == loginDTO.UserName.ToLower());
-                var checkPassword = await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
+                var user = await _userManager.Users
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.UserName.ToLower() == loginDTO.UserName.ToLower());
+                var checkPassword = user is null ? SignInResult.Failed : await _signInManager.CheckPasswordSignInAsync(user, loginDTO.Password, false);
 
                 if (user is null || !checkPassword.Succeeded)
                     return new ResponseResult
@@ -92,7 +106,16 @@ namespace Ecommerce.Repository.UserService
                 {
                     Object = new
                     {
-                        FullName = user.FullName,
+                        User = new
+                        {
+                            user.Id,
+                            user.FullName,
+                            user.UserName,
+                            user.Email,
+                            user.PhoneNumber,
+                            user.Location,
+                            user.Bio,
+                        },
                         token = await CreateToken(user),
                         Role = await _userManager.GetRolesAsync(user)
                     },
@@ -164,7 +187,7 @@ namespace Ecommerce.Repository.UserService
                     return new ResponseResult
                     {
                         Status = false,
-                        Object = "User Id not found.!",
+                        Object = "User not found.!",
                     };
 
                 var userUpdated = await _userManager.UpdateAsync(_mapper.Map(dto, user));
@@ -179,7 +202,7 @@ namespace Ecommerce.Repository.UserService
                 }
                 return new ResponseResult
                 {
-                    Object = userUpdated,
+                    Object = dto,
                     Status = true
                 };
             }

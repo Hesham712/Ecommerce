@@ -4,6 +4,7 @@ using Ecommerce.Models;
 using Ecommerce.Repository.GenericService;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers

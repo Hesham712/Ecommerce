@@ -5,6 +5,5 @@
         Pending,
         Approved,
         Rejected,
-        Processed
     }
 }
