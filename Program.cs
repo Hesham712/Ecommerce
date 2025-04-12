@@ -1,6 +1,7 @@
 using Ecommerce.Data;
 using Ecommerce.Helper;
 using Ecommerce.Models;
+using Ecommerce.Repository;
 using Ecommerce.Repository.CartService;
 using Ecommerce.Repository.GenericService;
 using Ecommerce.Repository.NotificationService;
@@ -72,6 +73,8 @@ builder.Services.AddTransient<IRefendService, RefendService>();
 builder.Services.AddTransient<IProductSerivce, ProductSerivce>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddSignalR();
+builder.Services.AddScoped<RecommendationService>();
+
 
 
 

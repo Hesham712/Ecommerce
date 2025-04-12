@@ -309,5 +309,40 @@ namespace Ecommerce.Repository.OrderService
                 };
             }
         }
+        public async Task<ResponseResult> DeleteOrderItem(int OrderId, int OrderItemId, string userName)
+        {
+            try
+            {
+                var order = await _context.Orders
+                    .Include(x => x.OrderProduct)
+                    .ThenInclude(x => x.Product)
+                    .Include(x => x.User)
+                    .FirstOrDefaultAsync(x => x.Id == OrderId && x.User.UserName == userName);
+                if (order == null)
+                    return new ResponseResult { Object = "Order not found", Status = false };
+                if (order.Status != OrderStatus.Pending)
+                    return new ResponseResult { Object = "OrderItem can't be deleted", Status = false };
+
+                var orderItem = order.OrderProduct.FirstOrDefault(op => op.Id == OrderItemId);
+                if (orderItem == null)
+                    return new ResponseResult { Object = "OrderItem not found", Status = false };
+                _context.OrderProduct.Remove(orderItem);
+
+                order.TotalPrice = order.OrderProduct
+                    .Where(op => op.Id != OrderItemId)
+                    .Sum(op => op.Product.Price * op.Quantity);
+
+                await _context.SaveChangesAsync();
+                return new ResponseResult { Object = "Order Item deleted successfully", Status = true };
+            }
+            catch (Exception e)
+            {
+                return new ResponseResult
+                {
+                    Object = e.InnerException?.Message ?? e.Message,
+                    Status = false
+                };
+            }
+        }
     }
 }

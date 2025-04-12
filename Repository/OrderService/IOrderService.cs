@@ -13,5 +13,7 @@ namespace Ecommerce.Repository.OrderService
         public Task<ResponseResult> GetBySeller(string UserName);
         public Task<ResponseResult> UpdateOrderStatus(int OrderId, OrderStatus status);
         public Task<ResponseResult> Delete(int OrderId,string userName);
+        public Task<ResponseResult> DeleteOrderItem(int OrderId, int OrderItemId, string userName);
+
     }
 }

@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Ecommerce.Data;
 using Ecommerce.DTO_s.Rate;
+using Ecommerce.Helper;
 using Ecommerce.Models;
 using Ecommerce.Repository.GenericService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers
 {
@@ -45,6 +47,31 @@ namespace Ecommerce.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.InnerException?.Message ?? ex.Message);
+            }
+        }
+        [HttpGet("ProductRate")]
+        public async Task<IActionResult> GetProductRate([Required][FromQuery] int productId)
+        {
+            try
+            {
+                var rates = await _context.Rates
+                    .Where(r => r.ProductId == productId)
+                    .ToListAsync();
+                if (rates == null || !rates.Any())
+                    return NotFound("No rates found for this product");
+                return Ok(new ResponseResult
+                {
+                    Object = rates,
+                    Status = false
+                });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new ResponseResult
+                {
+                    Object = e.InnerException?.Message ?? e.Message,
+                    Status = false
+                });
             }
         }
     }
